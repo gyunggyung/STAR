@@ -2,7 +2,7 @@ library(dplyr)
 library(ggplot2)
 
 # read csv
-scores <- read.csv("../Statistical_Value.csv")
+scores <- read.csv("../data/Statistical_Value.csv")
 
 #show kinds
 AVscore <- scores %>% filter(Kinds == "AVscore")

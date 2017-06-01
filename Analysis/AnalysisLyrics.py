@@ -1,7 +1,12 @@
 #AnalysisLyrics.py
-import AnalysisScore
 import re
 import numpy as np
+
+ReadScore=[]
+#파일 받은 거 다 숫자 배열로 저장 GG
+#ReadAllScore=[[0]*50]
+#문장 별 점수 GG
+LineScore=[]
 
 #전체가사
 lyrics = []
@@ -14,9 +19,54 @@ Spacelen=[]
 #복잡도
 complexity=[]
 
+def start_s():
+	global ReadScore
+	#txt 파일 받기
+	f = open("data/Score-record.txt", 'r')
+	while True:
+		line = f.readline()
+		if not line: break
+		ReadScore.append(line)
+	f.close()
+	return ReadScore
+
+#나중에 1,2 같은 거 받아서 if else문으로 평균값만 출력할지 전체값 출력할지 고르게
+def convert(lyrics): 
+	global ReadScore
+	global LineScore
+	
+	ReadScore = start_s()
+
+	#나중에는 줄 수로 계산
+	ScoreLen = len(lyrics)
+	print("ScoreLen : ",ScoreLen)
+	ReadAllScore = [[0]*ScoreLen]
+	#읽은 파일 줄 수 만큼 반복하면서 
+	for i in range(len(ReadScore)):
+		Slist = [i]*ScoreLen
+		test = ReadScore[i]
+		test = test.split(' ')
+		#배열로 나누고 배열을 문자열로 바꿔서
+		for i in range(0,ScoreLen):
+			Slist[i] = int(test[i])
+		#ReadAllScore에 저장
+		ReadAllScore.append(Slist)
+	
+	print("테스트2 : ",ReadScore,len(ReadScore)+1)
+
+	for i in range(ScoreLen):
+		### 문장 별로
+		OneLine=0
+		for j in range(len(ReadScore)+1):
+			OneLine += ReadAllScore[j][i]
+		LineScore.append(int(OneLine/len(ReadScore)))
+		#print("LineScore : ",LineScore)
+	return LineScore
+
+
 def start_l():
 	global lyrics
-	f = open("lyrics.txt")
+	f = open("../lyrics/lyrics.txt")
 	#가사를 리스트로 옮기기
 	while True:
 		line = f.readline()
@@ -63,6 +113,7 @@ def Complexity_cal(strings):
 
 #비율 계산 평균, 줄별 수, 한영비율,띄어쓰기 수, 복잡도
 def Association_analysis(AVscore ,Linelen, KEP, Spacelen, complexity):
+	#상관계수 구하기
 	correlation_coefficient = np.corrcoef([AVscore ,Linelen, KEP, Spacelen, complexity])
 	Cmax = 0
 	basket = 0
@@ -99,7 +150,7 @@ def Four_information():
 	#평균 점수
 	print("테스트 : ",lyrics)
 
-	AVscore = AnalysisScore.convert(lyrics)
+	AVscore = convert(lyrics)
 	i=0
 	for ly in lyrics:
 		Linelen.append(len(ly))	
@@ -113,7 +164,7 @@ def Four_information():
 	print(Spacelen)
 	print(complexity)
 	#해당 값을 csv파일로 저장
-	f = open("Statistical_Value.csv",'w')
+	f = open("data/Statistical_Value.csv",'w')
 	#시계열방식으로 저장
 	f.write("Kinds,line,score\n")
 	for i in range(len(lyrics)):
@@ -154,7 +205,7 @@ def Four_information():
 		f.write("\n")
 	f.close()
 	#####################################
-	f = open("Association_analysis",'w')
+	f = open("data/Association_analysis",'w')
 	#가장 관련이 큰 녀석이 어떤 녀석인지
 	best_coefficient = Association_analysis(AVscore ,Linelen, KEP, Spacelen, complexity)
 	print(best_coefficient)
@@ -164,7 +215,7 @@ def Four_information():
 		f.write('\n')
 	#가장 낮음 점수 저장
 	k = 0
-	lowest_score = AVscore[4]
+	lowest_score = AVscore[0]
 	Num_lowest_score = 0
 	for AV in AVscore:
 		if lowest_score > AV:
@@ -179,3 +230,4 @@ def Four_information():
 
 	return Linelen, KEP, Spacelen, complexity
 
+Four_information()

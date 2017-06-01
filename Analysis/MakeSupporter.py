@@ -20,7 +20,7 @@ def checkP(problem):
 	global lyrics
 	#가장 큰 상관계수쪽으로 리턴
 	global ProblemValue
-	f = open("many-lyrics.txt")
+	f = open("../lyrics/many-lyrics.txt")
 	lyrics = start(f,lyrics)
 	
 	for i in range(len(lyrics)):
@@ -78,7 +78,7 @@ def Make(ProblemValue,lyrics, NP):
 	return standard
 
 # 문제 값 받기
-f = open("Association_analysis")
+f = open("data/Association_analysis")
 problem = start(f,problem)
 checkP(problem)
 print(problem[1])
