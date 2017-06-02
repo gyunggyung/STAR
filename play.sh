@@ -2,7 +2,8 @@
 NowS="$(date +%Y%m%d%H%M%S)"
 filepath="somefile/record/$NowS"
 
-echo "추천하는 글로 타자연습을 하겠습니까? \n수락은 0 아닐 시 다른 숫자를 입력해 주세요"
+echo "추천하는 글로 타자연습을 하겠습니까?"
+echo "수락은 0 아닐 시 다른 숫자를 입력해 주세요"
 read value
 
 #수락 시 파일 옮기기

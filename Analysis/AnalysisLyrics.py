@@ -19,6 +19,7 @@ Spacelen=[]
 #복잡도
 complexity=[]
 
+#점수 받기
 def start_s():
 	global ReadScore
 	#txt 파일 받기
@@ -30,19 +31,22 @@ def start_s():
 	f.close()
 	return ReadScore
 
-#나중에 1,2 같은 거 받아서 if else문으로 평균값만 출력할지 전체값 출력할지 고르게
 def convert(lyrics): 
 	global ReadScore
 	global LineScore
 	
 	ReadScore = start_s()
 
-	#나중에는 줄 수로 계산
+	#각 줄의 가사 마다 점수가 있으니 구분하기 위해 받고
 	ScoreLen = len(lyrics)
-	print("ScoreLen : ",ScoreLen)
+	#각 줄 마다 가사를 추가 할 수 있는 공간 생성
 	ReadAllScore = [[0]*ScoreLen]
+
 	#읽은 파일 줄 수 만큼 반복하면서 
+	# ReadScore ||||||
+	# Scorelen  ------
 	for i in range(len(ReadScore)):
+		#받을 공간을 만들어 놓고
 		Slist = [i]*ScoreLen
 		test = ReadScore[i]
 		test = test.split(' ')
@@ -50,19 +54,20 @@ def convert(lyrics):
 		for i in range(0,ScoreLen):
 			Slist[i] = int(test[i])
 		#ReadAllScore에 저장
+		#줄수만큼 한 줄 씩 저장하면서 전체 점수를 저장
 		ReadAllScore.append(Slist)
 	
-	print("테스트2 : ",ReadScore,len(ReadScore)+1)
-
+	# i = --------
 	for i in range(ScoreLen):
 		### 문장 별로
 		OneLine=0
+		# j = |||||||||
 		for j in range(len(ReadScore)+1):
+			# - 가사에 한 줄 모든 평균 점수 구하기
 			OneLine += ReadAllScore[j][i]
+		#한 줄 씩 모든 가사의 평균을 구하기 (평균이니까)
 		LineScore.append(int(OneLine/len(ReadScore)))
-		#print("LineScore : ",LineScore)
 	return LineScore
-
 
 def start_l():
 	global lyrics
@@ -74,7 +79,7 @@ def start_l():
 			break
 		lyrics.append(line[:-1])
 	f.close()
-	print(len(lyrics))
+	#print(len(lyrics))
 	return lyrics
 	
 ####################################### 수행
@@ -122,6 +127,7 @@ def Association_analysis(AVscore ,Linelen, KEP, Spacelen, complexity):
 	#가장큰 상관계수 찾기
 	for i in range(1, 4):
 		Nsign = 1
+		#양수 1 음수 0
 		if(correlation_coefficient[0][i] < 0):
 			basket = correlation_coefficient[0][i] * -1
 			Nsign = 0
@@ -131,39 +137,32 @@ def Association_analysis(AVscore ,Linelen, KEP, Spacelen, complexity):
 			Cmax = basket
 			Nmax = i
 			sign = Nsign
-	switch_map = {1:'Linelen', 2:' KEP', 3:'Spacelen', 4:'complexity'}
-	print("showing")
-	print(Nmax)
-	print(switch_map[Nmax])
-	print(Cmax)
+	#분석 항목
+	switch_map = {1:'Linelen', 2:'KEP', 3:'Spacelen', 4:'complexity'}
 	#가장큰 상관계수의 종류, 음수인지 양수인지, 상관계수
 	return (switch_map[Nmax], str(sign), str(Cmax))
 
 #총합 계산
 def Four_information():
+	#점수 받고
 	start_l()
 	global lyrics
 	global Linelen
 	global KEP
 	global Spacelen
 	global complexity
-	#평균 점수
-	print("테스트 : ",lyrics)
-
+	
+	#평균 점수 받기
 	AVscore = convert(lyrics)
+	
 	i=0
+	# 모든 요소의 값을 저장
 	for ly in lyrics:
 		Linelen.append(len(ly))	
 		KEP.append(KEP_cal(ly))
 		Spacelen.append(Spacelen_cal(ly))
 		complexity.append(Complexity_cal(ly))
-	print("ok"*15)
-	print(AVscore)
-	print(Linelen)
-	print(KEP)
-	print(Spacelen)
-	print(complexity)
-	#해당 값을 csv파일로 저장
+	#해당 값들을 csv파일로 저장
 	f = open("data/Statistical_Value.csv",'w')
 	#시계열방식으로 저장
 	f.write("Kinds,line,score\n")
@@ -204,12 +203,12 @@ def Four_information():
 		f.write(str(complexity[i]))
 		f.write("\n")
 	f.close()
-	#####################################
+
+	# 상관계수 등 요소를 저장
 	f = open("data/Association_analysis",'w')
 	#가장 관련이 큰 녀석이 어떤 녀석인지
 	best_coefficient = Association_analysis(AVscore ,Linelen, KEP, Spacelen, complexity)
-	print(best_coefficient)
-	#(무엇인지, 음수인지 양수인지, 상관계수는 얼마나 되는지)
+	#무엇인지, 음수인지 양수인지, 상관계수는 얼마나 되는지 저장
 	for i in range(len(best_coefficient)):
 		f.write(best_coefficient[i])
 		f.write('\n')
@@ -224,9 +223,9 @@ def Four_information():
 		k += 1
 	f.write(str(lowest_score))
 	f.write("\n")
+	#가장 낮음 점수의 순서 찾기 (배열에서 몇번째인지)
 	f.write(str(Num_lowest_score))
 	f.close()
-	#####################################
 
 	return Linelen, KEP, Spacelen, complexity
 

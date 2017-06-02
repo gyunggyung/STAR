@@ -20,6 +20,7 @@ def checkP(problem):
 	global lyrics
 	#가장 큰 상관계수쪽으로 리턴
 	global ProblemValue
+	#전체 가사를 lyrics에 줄별로 옮기기
 	f = open("../lyrics/many-lyrics.txt")
 	lyrics = start(f,lyrics)
 	
@@ -39,39 +40,36 @@ def checkP(problem):
 		ProblemValue.append(ReValue)
 	return ProblemValue
 
-#NP는 음수 인지 양수인지 
-def Make(ProblemValue,lyrics, NP):
+#NP는 음수 인지 양수인지 MAX는 새로운 lyrics파일을 몇줄로 만들지
+def Make(ProblemValue,lyrics, NP,MAX):
 	AV = np.mean(ProblemValue)
 	SD = np.std(ProblemValue) #표편
 	#두 합이 상위 16% 정도
 	i = 0
 	plus = 0
 	#너무 글이 많으면 치기 힘들 수 있으니 알아서 바꾸기 바람
-	Limit = 20
+	Limit = MAX
 	#상관대수가 양수이면 점수가 안나오는 경우는 반대의 경우기 때문에 
 	standard = 0
 	if NP == '1':
 		standard = AV - SD
 	if NP == '0':
 		standard = AV + SD
-	print(standard)
 	f = open("upgrade/lyrics.txt",'w')
 	for ly in lyrics:
 		#상하위 16%정도만 가지고 만들기
 		if NP == '1':	
-			print("1")
 			if ProblemValue[i] < standard:
 				f.write(ly)
 				f.write("\n")
 				plus += 1
 		elif NP == '0':
-			print("1")
 			if ProblemValue[i] > standard:
 				f.write(ly)
 				f.write("\n")
 				plus += 1
 		i += 1
-		if plus > Limit:
+		if plus >= Limit:
 			break
 	f.close()		
 	print(AV,"< >",SD)
@@ -81,5 +79,4 @@ def Make(ProblemValue,lyrics, NP):
 f = open("data/Association_analysis")
 problem = start(f,problem)
 checkP(problem)
-print(problem[1])
-Make(ProblemValue,lyrics,problem[1])
+Make(ProblemValue,lyrics,problem[1],20)

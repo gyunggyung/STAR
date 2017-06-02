@@ -10,6 +10,7 @@ def start_l(PATH):
 		line = f.readline()
 		if not line:
 			break
+		#\n 부분 삭제 해서 리스트로 옮기기
 		lyrics.append(line[:-1])
 	f.close()
 	print(len(lyrics))
@@ -19,9 +20,11 @@ def start_l(PATH):
 # 점수 기록
 def Check_score(score):
 	f = open("Analysis/data/Score-record.txt",'a')
+	#점수 띄어쓰기 방식으로 기록
 	for i in score:
 		data = "%d " % (i*100)
 		f.write(data)
+	#다음 타이핑에서 점수를 쓸 것을 구분하기 위해 \n
 	f.write("\n")
 	f.close()
 
@@ -60,8 +63,9 @@ def play(ly):
 		timez.append(edL-stL)
 		#점수 계산 글자 수에 맞는 
 		score.append(answer*len(lyrics)/(edL-stL))
-
+	
 	lines = 1
+	#줄 별 점수 출력
 	for kk in score:
 		print("line",lines,":",kk)
 		lines += 1
@@ -79,6 +83,7 @@ def play(ly):
 	print("평균속도 : ",Avtime,"초")
 	print("채팅 외 시간 : ",NonChat)
 	print("점수 : ", Allscore,"점")
+	#Score-recrd 파일에 점수 기록 
 	Check_score(score)
 	#Show_score(score)
 
